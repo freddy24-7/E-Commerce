@@ -32,23 +32,31 @@ public class CartController {
 	@Autowired
 	private ItemRepository itemRepository;
 	
+
 	@PostMapping("/addToCart")
 	public ResponseEntity<Cart> addTocart(@RequestBody ModifyCartRequest request) {
 		User user = userRepository.findByUsername(request.getUsername());
-		if(user == null) {
+		if (user == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
 		Optional<Item> item = itemRepository.findById(request.getItemId());
-		if(!item.isPresent()) {
+		if (!item.isPresent()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
+
+		if (user.getCart() == null) {
+			user.setCart(new Cart());
+			user.getCart().setUser(user);
+		}
+
 		Cart cart = user.getCart();
 		IntStream.range(0, request.getQuantity())
-			.forEach(i -> cart.addItem(item.get()));
+				.forEach(i -> cart.addItem(item.get()));
 		cartRepository.save(cart);
 		return ResponseEntity.ok(cart);
 	}
-	
+
+
 	@PostMapping("/removeFromCart")
 	public ResponseEntity<Cart> removeFromcart(@RequestBody ModifyCartRequest request) {
 		User user = userRepository.findByUsername(request.getUsername());
