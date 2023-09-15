@@ -13,7 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -27,7 +27,7 @@ public class UserControllerTest {
 
     private final BCryptPasswordEncoder encoder = mock(BCryptPasswordEncoder.class);
 
-    //Mocks
+    // Mocks
     @Before
     public void setUp() {
         userController = new UserController();
@@ -46,15 +46,15 @@ public class UserControllerTest {
 
         final ResponseEntity<User> res = userController.createUser(request);
         assertNotNull(res);
-        assertEquals(200, res.getStatusCodeValue());
+        assertEquals(HttpStatus.OK, res.getStatusCode());
 
         User u = res.getBody();
         assertNotNull(u);
         assertEquals(0, u.getId());
         assertEquals("testUser", u.getUsername());
         assertEquals("thisIsHashed", u.getPassword());
-
     }
+
     @Test
     public void find_user_by_id_success() {
         User mockUser = new User();
@@ -93,5 +93,4 @@ public class UserControllerTest {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertNull(response.getBody());
     }
-
 }
