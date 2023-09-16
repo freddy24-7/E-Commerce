@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +50,9 @@ public class UserController {
 		}
 	}
 
+	@Value("${validation.value}")
+	private int validationValue;
+
 	@PostMapping("/create")
 	public ResponseEntity<User> createUser(@RequestBody CreateUserRequest createUserRequest) {
 		logger.info("UserController postmapping execution started");
@@ -59,7 +63,7 @@ public class UserController {
 
 			cartRepository.save(cart);
 			user.setCart(cart);
-			if (createUserRequest.getPassword().length() < 7 ||
+			if (createUserRequest.getPassword().length() < validationValue ||
 					!createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())) {
 				logger.error("Error occurred creating user: " + createUserRequest.getUsername());
 				return ResponseEntity.badRequest().build();
